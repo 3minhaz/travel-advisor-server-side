@@ -42,6 +42,16 @@ async function run() {
             res.json(findEmail);
 
         })
+        app.get('/myOrder', async (req, res) => {
+            // console.log('request', req.params.email);
+            // console.log(bookingCollection);
+            const cursor = await bookingCollection.find({}).toArray();
+
+            // console.log(findEmail);
+            // console.log(cursor);
+            res.json(cursor);
+
+        })
         //DELETE user order
         app.delete('/myOrder/:id', async (req, res) => {
             const result = await bookingCollection.deleteOne({ _id: ObjectId(req.params.id) });
@@ -63,7 +73,7 @@ async function run() {
         //DELETE service
         app.delete('/manageService/:id', async (req, res) => {
 
-            const result = await serviceCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            const result = await bookingCollection.deleteOne({ _id: ObjectId(req.params.id) })
             res.json(result);
         })
     }
