@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
-const email = require('mongodb').email;
 require('dotenv').config();
 
 
