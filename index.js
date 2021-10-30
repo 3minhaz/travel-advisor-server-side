@@ -58,6 +58,7 @@ async function run() {
             console.log(result);
             res.send(result);
         })
+
         //POST booking
         app.post('/booking', async (req, res) => {
             // console.log(req.body);
@@ -69,6 +70,18 @@ async function run() {
         app.post('/addNewService', async (req, res) => {
             const result = await serviceCollection.insertOne(req.body);
             res.json(result);
+        })
+        //update status
+        app.put('/updateStatus/:id', async (req, res) => {
+            console.log(req.params.id);
+            const filter = { _id: ObjectId(req.params.id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: 'approved'
+                }
+            }
+            res.send('hitting')
         })
         //DELETE service
         app.delete('/manageService/:id', async (req, res) => {
