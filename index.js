@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config();
 
 
@@ -16,7 +17,26 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
+        const database = client.db("Traveller");
+        const serviceCollection = database.collection("all_services");
+        //GET all API
+        app.get('/manageAllOrders', async (req, res) => {
+            const cursor = await serviceCollection.find({}).toArray();
+            console.log(cursor);
+            res.json(cursor);
+        })
 
+        //POST services
+        app.post('/addNewService', async (req, res) => {
+            const result = await serviceCollection.insertOne(req.body);
+            res.json(result);
+        })
+        //DELETE service
+        app.delete('/manageService/:id', async (req, res) => {
+
+            const result = await serviceCollection.deleteOne({ _id: ObjectId(req.params.id) })
+            res.json(result);
+        })
     }
     finally {
         // await client.close();
