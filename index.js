@@ -20,35 +20,45 @@ async function run() {
         const database = client.db("Traveller");
         const serviceCollection = database.collection("all_services");
         const bookingCollection = database.collection("user_booking");
+
         //GET all API
         app.get('/manageAllOrders', async (req, res) => {
             const cursor = await serviceCollection.find({}).toArray();
-            // console.log(cursor);
             res.json(cursor);
         })
+
         //GET Single API
         app.get('/book/:id', async (req, res) => {
             const result = await serviceCollection.findOne({ _id: ObjectId(req.params.id) });
             res.json(result);
         })
+
+
+        app.put('/update/:id', async (req, res) => {
+
+            const filter = { _id: ObjectId(req.params.id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: 'approved'
+                },
+            };
+            const result = await bookingCollection.updateOne(filter, updateDoc, options);
+            console.log(result);
+            res.json(result);
+        })
+
         //GET booking individual user
         app.get('/myOrder/:email', async (req, res) => {
-            // console.log('request', req.params.email);
-            // console.log(bookingCollection);
+
             const cursor = await bookingCollection.find({}).toArray();
             const findEmail = cursor.filter(book => book.email === req.params.email)
-            // console.log(findEmail);
-            // console.log(cursor);
             res.json(findEmail);
 
         })
-        app.get('/myOrder', async (req, res) => {
-            // console.log('request', req.params.email);
-            // console.log(bookingCollection);
-            const cursor = await bookingCollection.find({}).toArray();
 
-            // console.log(findEmail);
-            // console.log(cursor);
+        app.get('/myOrder', async (req, res) => {
+            const cursor = await bookingCollection.find({}).toArray();
             res.json(cursor);
 
         })
@@ -58,6 +68,7 @@ async function run() {
             console.log(result);
             res.send(result);
         })
+
 
         //POST booking
         app.post('/booking', async (req, res) => {
@@ -71,18 +82,7 @@ async function run() {
             const result = await serviceCollection.insertOne(req.body);
             res.json(result);
         })
-        //update status
-        app.put('/updateStatus/:id', async (req, res) => {
-            console.log(req.params.id);
-            const filter = { _id: ObjectId(req.params.id) };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    status: 'approved'
-                }
-            }
-            res.send('hitting')
-        })
+
         //DELETE service
         app.delete('/manageService/:id', async (req, res) => {
 
